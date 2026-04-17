@@ -7,6 +7,7 @@ jobs:
     strategy:
       matrix:
         ocaml_version: [5.4.1]
+        deps_install: ["from_opam", "from_master"]
     outputs:
       matrix: ${{ steps.set.outputs.matrix }}
 
@@ -33,6 +34,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: install lambdapi
+        run: |
+          if ${{matrix.lambdapi_master}} = "yes"
+          git clone 
+          cd lambdapi
+          opam pin add -n -k path lambdapi .
+          opam install --deps-only -d -t lambdapi
+          eval $(opam env)
+          dune build
 
       - name: setting up opam
         uses: ocaml/setup-ocaml@v3
@@ -41,4 +51,4 @@ jobs:
       - name: install library ${{ matrix.lib }} 
         run: |
           echo "installing ${{ matrix.lib }}"
-          opam install -y "${{ matrix.lib }}"
+          opam install -y --deps-only "${{ matrix.lib }}"
