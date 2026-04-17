@@ -10,7 +10,6 @@ jobs:
         deps_install: ["from_opam", "from_master"]
     outputs:
       matrix: ${{ steps.set.outputs.matrix }}
-
     steps:
       - uses: actions/checkout@v4
       - id: set
@@ -22,27 +21,28 @@ jobs:
             echo "$json"
             echo "EOF"
           } >> $GITHUB_OUTPUT
-  
 
   install-library:
     needs: generate-matrix
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-
     steps:
       - uses: actions/checkout@v4
-      - name: install lambdapi
+      - name: install dependencies from master
+        if: ${{ matrix.deps_install == 'from_master' }}
         run: |
-          if ${{matrix.lambdapi_master}} = "yes"
-          git clone 
-          cd lambdapi
+          git clone https://github.com/Deducteam/lambdapi.git
           opam pin add -n -k path lambdapi .
           opam install --deps-only -d -t lambdapi
           eval $(opam env)
-          dune build
+          opam install -y lambdapi
+          opam repository -a --set-default add lambdapi https://github.com/deducteam/opam-lambdapi-repository.git
+      - name: install dependencies from opam
+        if: ${{ matrix.deps_install != 'from_master' }}
+        run: |
+          opam repository -a --set-default add lambdapi https://github.com/deducteam/opam-lambdapi-repository.git
 
       - name: setting up opam
         uses: ocaml/setup-ocaml@v3
