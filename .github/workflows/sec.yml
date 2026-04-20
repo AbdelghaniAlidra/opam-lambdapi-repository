@@ -13,7 +13,8 @@ jobs:
     steps:
       - id: set
         run: |
-          files= "file1" "file2"
+          # files=$(find packages -type f -name "opam" -exec dirname {} \;)
+          files= $(echo file1 file2)
           json=$(printf '%s' "$files" | jq -R . | jq -s '{include: map({deps_install: "${{matrix.deps_install}}", lib: ., ocaml_version: "${{matrix.ocaml_version}}"})}')
           {
             echo "matrix<<EOF"
