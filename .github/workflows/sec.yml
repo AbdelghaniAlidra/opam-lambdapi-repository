@@ -1,44 +1,80 @@
-on:
-  push:
+name: Artifact example
+
+on: [push]
+
 jobs:
-  generate-matrix:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Generate matrix file
-        run: |
-          mkdir path1
-          mkdir path2
-          touch path1/opam
-          touch path2/opam
+      - name: Créer un fichier
+        run: echo "Bonjour depuis le job build !" > message.txt
 
-          files=$(find . -type f -name "opam" -exec dirname {} \;)
-          json=$(printf '%s\n' "$files" | jq -R . | jq -s '{include: map({lib: .})}')
-
-          echo "$json" > matrix.json
-
-      - name: Upload matrix artifact
+      - name: Uploader l'artifact
         uses: actions/upload-artifact@v4
         with:
-          name: matrix
-          path: matrix.json
+          name: mon-fichier
+          path: message.txt
 
-  use-matrix:
+  consume:
     runs-on: ubuntu-latest
-    needs: generate-matrix
+    needs: build
 
     steps:
-      - name: Download matrix artifact
+      - name: Télécharger l'artifact
         uses: actions/download-artifact@v4
         with:
-          name: matrix
+          name: mon-fichier
 
-      - id: read
-        name: Read matrix file
-        run: |
-          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+      - name: Lire le fichier
+        run: cat message.txt
 
-      - name: Debug
-        run: echo "Lib = ${{ matrix.lib }}"
+
+
+
+
+
+# on:
+#   push:
+# jobs:
+#   generate-matrix:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Generate matrix file
+#         run: |
+#           mkdir path1
+#           mkdir path2
+#           touch path1/opam
+#           touch path2/opam
+
+#           files=$(find . -type f -name "opam" -exec dirname {} \;)
+#           json=$(printf '%s\n' "$files" | jq -R . | jq -s '{include: map({lib: .})}')
+
+#           echo "$json" > matrix.json
+
+#       - name: Upload matrix artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: matrix
+#           path: matrix.json
+
+#   use-matrix:
+#     runs-on: ubuntu-latest
+#     needs: generate-matrix
+
+#     steps:
+#       - name: Download matrix artifact
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: matrix
+
+#       - id: read
+#         name: Read matrix file
+#         run: |
+#           cat matrix.json
+
+#       - name: Debug
+#         run: echo "Lib = ${{ matrix.lib }}"
 
   # install-library:
   #   needs: generate-matrix
