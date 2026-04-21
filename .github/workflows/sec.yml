@@ -40,6 +40,7 @@ jobs:
         run: |
           libs=$(cat message.txt)
           json=$(printf '%s\n' "$libs" | jq -R . | jq -s '{include: map({lib: . , ocaml_version: "${{matrix.ocaml_version}}"})}')
+          echo $json
 
 
 
