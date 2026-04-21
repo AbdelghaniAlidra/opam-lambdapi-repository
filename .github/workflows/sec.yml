@@ -9,7 +9,13 @@ jobs:
     steps:
       - name: Créer un fichier
         run: |
-          echo "Bonjour depuis le job build !" > message.txt
+          mkdir path1
+          mkdir path2
+          touch path1/opam
+          touch path2/opam
+
+          files=$(find . -type f -name "opam" -exec dirname {} \;)
+          echo $files > message.txt
 
       - name: Uploader l'artifact
         uses: actions/upload-artifact@v4
