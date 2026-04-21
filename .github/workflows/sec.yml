@@ -39,7 +39,7 @@ jobs:
       - name: Lire le fichier
         run: |
           libs = $(cat message.txt)
-          json=$(printf '%s\n' "$files" | jq -R . | jq -s '{include: map({lib: . , ocaml_version: "${{matrix.ocaml_version}}"})}')
+          json=$(printf '%s\n' "$libs" | jq -R . | jq -s '{include: map({lib: . , ocaml_version: "${{matrix.ocaml_version}}"})}')
 
 
 
