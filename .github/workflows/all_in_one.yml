@@ -70,8 +70,8 @@ jobs:
       # the pipeline will not test the installation of the library with the master version of the second dependency on which there exist no upper bound condition
       # To overcome this, the pipeline should extract the dependencies together with version constraints of each library one on one and install it accordingly
       # The pipeline also tests the installation of the library with the master version of lambdapi. This should probaly
-        if: ${{ matrix.deps_install == 'from_master' }} \
-          && $(cat {{matrix.lib}}/opam | grep '<=')
+        # ${{ matrix.deps_install == 'from_master' }} \
+        if: $(cat {{matrix.lib}}/opam | grep '<=')
         run: |
           git clone https://github.com/Deducteam/lambdapi.git
           cd lambdapi
